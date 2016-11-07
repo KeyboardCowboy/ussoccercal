@@ -1,0 +1,8 @@
+# Ignore generated ical files.
+calendars/*.ics
+
+# Ignore local log files.
+/log
+
+# Ignore vendor dir.
+/vendor
