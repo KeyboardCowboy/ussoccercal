@@ -101,15 +101,7 @@ class SoccerCal {
       $vars['events'][] = $event->render();
     }
 
-    // @todo: Prep calendar vars for rendering.
-    $calendar = $twig->render('ical.twig', $vars);
-
-    file_put_contents(__DIR__ . "/../calendars/{$this->team}.ics", $calendar);
-
-    $url = "http://" . $this->httpHost() . "/calendars/{$this->team}.ics";
-    $link = '<a href="' . $url . '">' . $url . '</a>';
-
-    print "$link<br />";
+    return $twig->render('ical.twig', $vars);
   }
 
   /**
@@ -140,6 +132,24 @@ class SoccerCal {
    */
   private function httpHost() {
     return isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+  }
+
+  /**
+   * Create the subscribable calendar file.
+   */
+  public function generateCalendar() {
+    $calendar = $this->render();
+    file_put_contents(__DIR__ . "/../calendars/{$this->team}.ics", $calendar);
+  }
+
+  /**
+   * Print a summary and URL for the calendar.
+   */
+  public function summary() {
+    $url = "http://" . $this->httpHost() . "/calendars/{$this->team}.ics";
+    $link = '<a href="' . $url . '">' . $url . '</a>';
+
+    print date('c') . " - Calendar rendered<br />{$link}";
   }
 
 }

@@ -24,7 +24,7 @@ class Renderer {
    * Singleton loader to load $twig for template rendering.
    *
    * @return static
-   *   The Renderer obejct.
+   *   The Renderer object.
    */
   public static function load() {
     static $instance;
