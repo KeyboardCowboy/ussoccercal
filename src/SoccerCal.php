@@ -146,10 +146,20 @@ class SoccerCal {
    * Print a summary and URL for the calendar.
    */
   public function summary() {
-    $url = "http://" . $this->httpHost() . "/calendars/{$this->team}.ics";
+    $url = "http://{$this->httpHost()}/calendars/{$this->team}.ics";
     $link = '<a href="' . $url . '">' . $url . '</a>';
 
-    print date('c') . " - Calendar rendered<br />{$link}";
+    return date('c') . " - Calendar rendered<br />{$link}";
+  }
+
+  /**
+   * Return an error message if the build fails.
+   *
+   * @return string
+   *   A nice error message.
+   */
+  public function failure() {
+    return 'Error building calendar for ' . $this->team;
   }
 
 }
