@@ -8,11 +8,14 @@
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/SoccerCalEvent.php';
+require_once __DIR__ . '/Renderer.php';
 
 /**
  * Class SoccerCal.
  */
 class SoccerCal {
+  // Hostname for the US Soccer website.
   const USSOCCER_HOSTNAME = 'http://www.ussoccer.com';
 
   // URLs to fetch.
@@ -20,16 +23,31 @@ class SoccerCal {
     'mnt' => 'http://www.ussoccer.com/mens-national-team/schedule-tickets',
   ];
 
+  // THe team shortname we are building.
   protected $team;
+
+  // THe retrieved document object from ussoccer.com.
   protected $document;
+
+  // Event objects extracted from a ussoccer.com schedule page.s
   protected $events = [];
 
+  /**
+   * SoccerCal constructor.
+   *
+   * @param string $team
+   *   The team shortname for the schedule to fetch.
+   *   Ex. 'mnt' or 'wnt'
+   */
   public function __construct($team) {
     $this->team = $team;
     $this->fetchDocument();
     $this->extractEvents();
   }
 
+  /**
+   * Fetch the DOM of a schedule page.
+   */
   private function fetchDocument() {
     $contents = file_get_contents(static::$url[$this->team]);
 
@@ -41,7 +59,10 @@ class SoccerCal {
     $this->document = $dom;
   }
 
-  public function extractEvents() {
+  /**
+   * Extract events from the schedule DOM.
+   */
+  private function extractEvents() {
     // @todo: Is there a way to specify this specific table?
     $tables = $this->document->getElementsByTagName('table');
 
@@ -64,6 +85,9 @@ class SoccerCal {
     }
   }
 
+  /**
+   * Render the ical file.
+   */
   public function render() {
     $twig = Renderer::load()->twig;
     $vars = [];
@@ -82,225 +106,40 @@ class SoccerCal {
 
     file_put_contents(__DIR__ . "/../calendars/{$this->team}.ics", $calendar);
 
-    $url = "http://" . $_SERVER['HTTP_HOST'] . "/calendars/{$this->team}.ics";
+    $url = "http://" . $this->httpHost() . "/calendars/{$this->team}.ics";
     $link = '<a href="' . $url . '">' . $url . '</a>';
 
     print "$link<br />";
   }
 
+  /**
+   * Get the team shortcode.
+   *
+   * @return string
+   *   The team shortcode.
+   */
   public function getTeam() {
     return $this->team;
   }
 
+  /**
+   * Get the URL for the team schedule.
+   *
+   * @return string
+   *   The URL for the team schedule.
+   */
   public function getUrl() {
     return static::$url[$this->team];
   }
 
-}
-
-/**
- * Class SoccerCalEvent.
- */
-class SoccerCalEvent {
-  private $cal;
-
-  private $matchup;
-  private $venue;
-  private $info;
-  private $datetime;
-  private $links = [];
-  private $url;
-
-  // Map data structure to DOM elements.
-  protected static $field = [
-    'date' => 0,
-    'time' => 1,
-    'matchup' => 2,
-    'venue' => 3,
-    'info' => 4,
-  ];
-
-  public function __construct($cal, $cells) {
-    $this->cal = $cal;
-    $this->extractData($cells);
-  }
-
-  protected function extractData($cells) {
-    $this->datetime = $this->extractDateTime($cells->item(static::$field['date']));
-    $this->matchup = $this->extractMatchup($cells->item(static::$field['matchup']));
-    $this->venue = $this->extractVenue($cells->item(static::$field['venue']));
-    $this->info = $this->extractInfo($cells->item(static::$field['info']));
-  }
-
-  protected function extractDateTime(DOMElement $cell) {
-    $attributes = $cell->getElementsByTagName('time')->item(0)->attributes;
-    $datetime = $attributes->getNamedItem('datetime')->value;
-
-    // The times from the website are listed in EST but still contain the UMT
-    // indicator 'Z' so we remove it as we're setting the time zone manually.
-    $datetime = str_replace('Z', '', $datetime);
-
-    return $datetime;
-  }
-
-  protected function extractMatchup(DOMElement $cell) {
-    $attributes = $cell->getElementsByTagName('meta')->item(0)->attributes;
-    $value = $attributes->getNamedItem('content')->value;
-
-    // Remove sponsorships.
-    list($value,) = explode(',', $value, 2);
-
-    // Store the URL to the event.
-    $attributes = $cell->getElementsByTagName('a')->item(0)->attributes;
-    $url = $attributes->getNamedItem('href')->value;
-    $this->url = SoccerCal::USSOCCER_HOSTNAME . $url;
-
-    return $value;
-  }
-
-  protected function extractVenue(DOMElement $cell) {
-    // Store links for the description.
-    $this->extractLinks($cell);
-
-    // Grab the data from the meta element.
-    $attributes = $cell->getElementsByTagName('meta')->item(0)->attributes;
-    $venue = $attributes->getNamedItem('content')->value;
-
-    // Exclude anything after a line break.  This is usually links and other
-    // junk we don't need.
-    list($venue) = explode('<br />', $venue);
-
-    return $venue;
-  }
-
-  protected function extractInfo(DOMElement $cell) {
-    return $this->getInnerHTML($cell);
-  }
-
-  protected function extractLinks(DOMElement $cell) {
-    $links = $cell->getElementsByTagName('a');
-
-    $i = 0;
-    while ($a = $links->item($i)) {
-      $attributes = $a->attributes;
-      $href = $attributes->getNamedItem('href')->value;
-      $text = $a->textContent;
-
-      $this->links[$href] = $text;
-
-      $i++;
-    }
-  }
-
   /**
-   * @param $element
+   * Get the HTTP HOST value.
    *
-   * @return mixed
+   * @return string
+   *   The value of $_SERVER['HTTP_HOST'] or localhost if not set.
    */
-  private function getInnerHTML($element) {
-    return $element->ownerDocument->saveHTML($element);
-  }
-
-  protected function formatDateTime($datetime, $full = TRUE) {
-    $date = $full ? date('Ymd\THis', $datetime) : date('Ymd', $datetime);
-
-    return 'America/New_York:' . $date;
-  }
-
-  public function render() {
-    $twig = Renderer::load()->twig;
-
-    $vars = [
-      'uid' => $this->getUid(),
-      'summary' => $this->getSummary(),
-      'description' => $this->getDescription(),
-      'location' => $this->getLocation(),
-      'url' => $this->getUrl(),
-      'startTime' => $this->getStartDate(),
-      'endTime' => $this->getEndDate(),
-    ];
-
-    return $twig->render('event.twig', $vars);
-  }
-
-  public function getUid() {
-    return $this->cal->getTeam() . '-' . $this->getStartDate() . '@localhost';
-  }
-
-  public function getUrl() {
-    return $this->url;
-  }
-
-  public function getSummary() {
-    return $this->matchup;
-  }
-
-  public function getDescription() {
-    $out = [];
-
-    // Add extracted URLs.
-    foreach ($this->links as $href => $text) {
-      $url = SoccerCal::USSOCCER_HOSTNAME . $href;
-      $out[] = $text . ':\n' . $url;
-    }
-
-    return implode('\n\n', $out);
-  }
-
-  public function getLocation() {
-    return $this->venue;
-  }
-
-  public function getStartDate() {
-    $timestamp = $this->getTimeStamp();
-
-    return static::formatDateTime($timestamp, $this->hasEndTime());
-  }
-
-  public function hasEndTime() {
-    list($date, $time) = explode('T', $this->datetime);
-
-    return ($time !== '00:00:00');
-  }
-
-  public function getEndDate() {
-    if ($this->hasEndTime()) {
-      $start_date = $this->getTimeStamp();
-      $end_date = strtotime('+2 hours', $start_date);
-
-      return static::formatDateTime($end_date);
-    }
-    else {
-      return '';
-    }
-  }
-
-  /**
-   * @return false|int
-   */
-  private function getTimeStamp() {
-    return strtotime($this->datetime);
-  }
-
-}
-
-class Renderer {
-  public $twig;
-
-  public function __construct() {
-    // Load the twig renderer.
-    $loader = new Twig_Loader_Filesystem(__DIR__ . '/../templates');
-    $this->twig = new Twig_Environment($loader);
-  }
-
-  public static function load() {
-    static $instance;
-
-    if (!isset($instance)) {
-      $instance = new static();
-    }
-
-    return $instance;
+  private function httpHost() {
+    return isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
   }
 
 }
