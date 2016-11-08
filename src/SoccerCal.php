@@ -7,13 +7,13 @@
  *   file and daily emails?
  */
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class SoccerCal.
  */
 class SoccerCal {
-  const HOSTNAME = 'http://www.ussoccer.com';
+  const USSOCCER_HOSTNAME = 'http://www.ussoccer.com';
 
   // URLs to fetch.
   protected static $url = [
@@ -80,7 +80,12 @@ class SoccerCal {
     // @todo: Prep calendar vars for rendering.
     $calendar = $twig->render('ical.twig', $vars);
 
-    file_put_contents(__DIR__ . "/calendars/{$this->team}.ics", $calendar);
+    file_put_contents(__DIR__ . "/../calendars/{$this->team}.ics", $calendar);
+
+    $url = "http://" . $_SERVER['HTTP_HOST'] . "/calendars/{$this->team}.ics";
+    $link = '<a href="' . $url . '">' . $url . '</a>';
+
+    print "$link<br />";
   }
 
   public function getTeam() {
@@ -148,7 +153,7 @@ class SoccerCalEvent {
     // Store the URL to the event.
     $attributes = $cell->getElementsByTagName('a')->item(0)->attributes;
     $url = $attributes->getNamedItem('href')->value;
-    $this->url = SoccerCal::HOSTNAME . $url;
+    $this->url = SoccerCal::USSOCCER_HOSTNAME . $url;
 
     return $value;
   }
@@ -235,7 +240,7 @@ class SoccerCalEvent {
 
     // Add extracted URLs.
     foreach ($this->links as $href => $text) {
-      $url = SoccerCal::HOSTNAME . $href;
+      $url = SoccerCal::USSOCCER_HOSTNAME . $href;
       $out[] = $text . ':\n' . $url;
     }
 
@@ -284,7 +289,7 @@ class Renderer {
 
   public function __construct() {
     // Load the twig renderer.
-    $loader = new Twig_Loader_Filesystem(__DIR__ . '/templates');
+    $loader = new Twig_Loader_Filesystem(__DIR__ . '/../templates');
     $this->twig = new Twig_Environment($loader);
   }
 

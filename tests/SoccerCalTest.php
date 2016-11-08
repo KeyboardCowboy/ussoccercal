@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../SoccerCal.php';
+require_once __DIR__ . '/../src/SoccerCal.php';
 
 /**
  * Unit tests for SoccerCal class.
