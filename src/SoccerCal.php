@@ -2,9 +2,6 @@
 /**
  * @file
  * Generate an iCal ffed for US Soccer.
- *
- * @todo: Make sure there is detailed data validation and error reporting.  Log
- *   file and daily emails?
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -49,40 +46,62 @@ class SoccerCal {
    * Fetch the DOM of a schedule page.
    */
   private function fetchDocument() {
-    $contents = file_get_contents(static::$url[$this->team]);
+    if ($contents = file_get_contents(static::$url[$this->team])) {
+      $dom = new DOMDocument();
+      @$dom->loadHTML($contents, LIBXML_NOERROR);
+      $dom->preserveWhiteSpace = FALSE;
+      $dom->normalizeDocument();
 
-    $dom = new DOMDocument();
-    @$dom->loadHTML($contents, LIBXML_NOERROR);
-    $dom->preserveWhiteSpace = FALSE;
-    $dom->normalizeDocument();
-
-    $this->document = $dom;
+      $this->document = $dom;
+    }
+    else {
+      throw new Exception("Failed to fetch data from url.");
+    }
   }
 
   /**
    * Extract events from the schedule DOM.
    */
   private function extractEvents() {
-    // @todo: Is there a way to specify this specific table?
     $tables = $this->document->getElementsByTagName('table');
-
-    // @todo: Run a sanity check on the data so we only replace existing data with valid data.
 
     // Cycle through each table row.
     foreach ($tables as $table) {
+      // Validate the table element.
+      if (!$this->validateTable($table)) {
+        continue;
+      }
+
       $rows = $table->getElementsByTagName('tr');
 
       // Pull the data out of the TD elements.
-      // @todo: Parse the text.  It's a mess.
       foreach ($rows as $tr) {
         $cells = $tr->getElementsByTagName('td');
 
         if ($cells->length > 0) {
-          // @todo: Create a unique key(s)? from the team and date.
           $this->events[] = new SoccerCalEvent($this, $cells);
         }
       }
     }
+
+    if (empty($this->events)) {
+      throw new Exception("Failed to extract events from the schedule.");
+    }
+  }
+
+  /**
+   * Verify that the table element is a valid match table.
+   *
+   * @param \DOMElement $table
+   *   A table element from the schedule page.
+   *
+   * @return bool
+   *   TRUE if the table has the appropriate class.
+   */
+  private function validateTable(DOMElement $table) {
+    $classes = explode(' ', $table->getAttribute('class'));
+
+    return in_array('match-table', $classes);
   }
 
   /**
