@@ -205,7 +205,7 @@ class SoccerCal {
     $calendar = $this->render();
 
     // Store the URL.
-    $path = realpath(__DIR__ . "/../calendars/{$this->calInfo->name}.ics");
+    $path = __DIR__ . "/../calendars/{$this->calInfo->name}.ics";
 
     // Create the calendar.
     if (!file_put_contents($path, $calendar)) {
