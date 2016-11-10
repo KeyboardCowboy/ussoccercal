@@ -1,5 +1,6 @@
 # Ignore generated ical files.
 calendars/*.ics
+/data/statuses.json
 
 # Ignore local log files.
 /log

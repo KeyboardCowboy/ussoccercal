@@ -59,9 +59,14 @@ class SoccerCal {
    *   The json object from the data.
    */
   public static function loadCalendarStatuses() {
-    $data = file_get_contents(static::STATUS_FILE);
+    if (file_exists(static::STATUS_FILE)) {
+      $data = file_get_contents(static::STATUS_FILE);
 
-    return json_decode($data);
+      return json_decode($data);
+    }
+    else {
+      return json_decode("{}");
+    }
   }
 
   /**
