@@ -248,7 +248,7 @@ class SoccerCal {
         'url' => 'http://' . static::httpHost() . "/calendars/{$cal_info->name}.ics",
         'generated' => isset($statuses->{$cal_info->name}->generated) ? $statuses->{$cal_info->name}->generated : 0,
         'last_attempt' => isset($statuses->{$cal_info->name}->last_attempt) ? $statuses->{$cal_info->name}->last_attempt : 0,
-        'error' => isset($statuses->{$cal_info->name}->error_message) ? $statuses->{$cal_info->name}->error_message : '',
+        'message' => isset($statuses->{$cal_info->name}->message) ? $statuses->{$cal_info->name}->message : '',
         'status' => isset($statuses->{$cal_info->name}->status) ? $statuses->{$cal_info->name}->status : 1,
         'source' => $cal_info->url,
       ];
