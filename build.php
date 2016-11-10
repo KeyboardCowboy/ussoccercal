@@ -19,7 +19,7 @@ foreach ($json->calendars as &$cal_info) {
     $vars = [
       'last_attempt' => time(),
       'generated' => time(),
-      'message' => '',
+      'message' => 'Calendar successfully updated!',
       'status' => 1,
     ];
     SoccerCal::setStatus($cal_info->name, $vars);

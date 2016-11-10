@@ -4,6 +4,9 @@
         <span class="label">Last Updated:</span>
         {{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
     </div>
+    <div><span class="label">Subscribe:</span> <a href="{{ url }}">{{ url }}</a></div>
+
+    <h3>Status Report</h3>
     <div>
         <span class="label">Last Attempt:</span>
         {{ last_attempt | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
@@ -16,16 +19,11 @@
     {%  else %}
         <span class="status--failed">Failed</span>
     {% endif %}
-    </div>
 
     {% if message %}
-    <p class="status--failed">{{ message }}</p>
+        <span class="status--{% if status == 1 %}passed{% else %}failed{% endif %}"> - {{ message }}</span>
     {%  endif %}
+    </div>
 
-    <div>
-        <span class="label">Subscribe:</span> <a href="{{ url }}">{{ url }}</a>
-    </div>
-    <div>
-        <span class="label">Source:</span> <a href="{{ source }}">{{ source }}</a>
-    </div>
+    <div><span class="label">Source:</span> <a href="{{ source }}">{{ source }}</a></div>
 </article>
