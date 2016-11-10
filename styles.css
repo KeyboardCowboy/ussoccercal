@@ -1,0 +1,49 @@
+body {
+  margin: 0;
+  font-family: "USSF 90 Minutes", Arial, sans-serif;
+  line-height: 1.4em;
+}
+
+header {
+  background-color: #c22032;
+  padding: 2em;
+}
+
+#crest, h1 {
+  display: inline-block;
+  vertical-align: middle;
+  color: white;
+}
+
+h1 {
+  margin-left: 1em;
+}
+
+main {
+  padding: 2em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "USSF 90 Minutes", Arial, sans-serif;
+  font-weight: 700;
+}
+
+footer {
+  padding: 2em;
+  background-color: #212844;
+  color: white;
+}
+
+.status--passed {
+  color: green;
+}
+
+.status--failed {
+  color: maroon;
+}
+
+.label {
+  font-weight: bold;
+  min-width: 200px;
+  display: inline-block;
+}

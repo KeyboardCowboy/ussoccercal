@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Generate an iCal ffed for US Soccer.
+ * Generate an iCal feed for US Soccer.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -15,13 +15,12 @@ class SoccerCal {
   // Hostname for the US Soccer website.
   const USSOCCER_HOSTNAME = 'http://www.ussoccer.com';
 
-  // URLs to fetch.
-  protected static $url = [
-    'mnt' => 'http://www.ussoccer.com/mens-national-team/schedule-tickets',
-  ];
+  // Data files.
+  const CALENDAR_FILE = __DIR__ . '/../data/calendars.json';
+  const STATUS_FILE = __DIR__ . '/../data/statuses.json';
 
-  // THe team shortname we are building.
-  protected $team;
+  // The calInfo shortname we are building.
+  protected $calInfo;
 
   // THe retrieved document object from ussoccer.com.
   protected $document;
@@ -32,21 +31,55 @@ class SoccerCal {
   /**
    * SoccerCal constructor.
    *
-   * @param string $team
-   *   The team shortname for the schedule to fetch.
-   *   Ex. 'mnt' or 'wnt'
+   * @param object $cal_info
+   *   A data object for a calendar from the data.json file.
    */
-  public function __construct($team) {
-    $this->team = $team;
+  public function __construct($cal_info) {
+    $this->calInfo = $cal_info;
     $this->fetchDocument();
     $this->extractEvents();
+  }
+
+  /**
+   * Load the calendar data.
+   *
+   * @return object
+   *   The json object from the data.
+   */
+  public static function loadCalendarInfo() {
+    $data = file_get_contents(static::CALENDAR_FILE);
+
+    return json_decode($data);
+  }
+
+  /**
+   * Load the calendar statuses.
+   *
+   * @return object
+   *   The json object from the data.
+   */
+  public static function loadCalendarStatuses() {
+    $data = file_get_contents(static::STATUS_FILE);
+
+    return json_decode($data);
+  }
+
+  /**
+   * Save the json data.
+   *
+   * @param object $json
+   *   The calendar json data.
+   */
+  public static function saveCalendarStatuses($json) {
+    $data = json_encode($json);
+    file_put_contents(static::STATUS_FILE, $data);
   }
 
   /**
    * Fetch the DOM of a schedule page.
    */
   private function fetchDocument() {
-    if ($contents = file_get_contents(static::$url[$this->team])) {
+    if ($contents = file_get_contents($this->calInfo->url)) {
       $dom = new DOMDocument();
       @$dom->loadHTML($contents, LIBXML_NOERROR);
       $dom->preserveWhiteSpace = FALSE;
@@ -112,8 +145,7 @@ class SoccerCal {
     $vars = [];
 
     // Calendar title.
-    // @todo: Set title dynamically.
-    $vars['title'] = "US Men's National Team";
+    $vars['title'] = $this->calInfo->title;
 
     // Build events.
     foreach ($this->events as $event) {
@@ -124,23 +156,31 @@ class SoccerCal {
   }
 
   /**
-   * Get the team shortcode.
+   * Get the calInfo shortcode.
    *
-   * @return string
-   *   The team shortcode.
+   * @param string $param
+   *   An optional parameter from the calInfo object.
+   *
+   * @return string|object
+   *   A value from the calInfo object or the whole object itself.
    */
-  public function getTeam() {
-    return $this->team;
+  public function getCalInfo($param = NULL) {
+    if (isset($param)) {
+      return isset($this->calInfo->{$param}) ? $this->calInfo->{$param} : NULL;
+    }
+    else {
+      return $this->calInfo;
+    }
   }
 
   /**
-   * Get the URL for the team schedule.
+   * Get the URL for the calInfo schedule.
    *
    * @return string
-   *   The URL for the team schedule.
+   *   The URL for the calInfo schedule.
    */
   public function getUrl() {
-    return static::$url[$this->team];
+    return $this->calInfo->url;
   }
 
   /**
@@ -149,7 +189,7 @@ class SoccerCal {
    * @return string
    *   The value of $_SERVER['HTTP_HOST'] or localhost if not set.
    */
-  private function httpHost() {
+  private static function httpHost() {
     return isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
   }
 
@@ -158,27 +198,62 @@ class SoccerCal {
    */
   public function generateCalendar() {
     $calendar = $this->render();
-    file_put_contents(__DIR__ . "/../calendars/{$this->team}.ics", $calendar);
+
+    // Store the URL.
+    $path = realpath(__DIR__ . "/../calendars/{$this->calInfo->name}.ics");
+
+    // Create the calendar.
+    if (!file_put_contents($path, $calendar)) {
+      throw new Exception("Failed to save updated calendar.");
+    }
   }
 
   /**
-   * Print a summary and URL for the calendar.
-   */
-  public function summary() {
-    $url = "http://{$this->httpHost()}/calendars/{$this->team}.ics";
-    $link = '<a href="' . $url . '">' . $url . '</a>';
-
-    return date('c') . " - Calendar rendered<br />{$link}";
-  }
-
-  /**
-   * Return an error message if the build fails.
+   * Store the status values.
    *
-   * @return string
-   *   A nice error message.
+   * @param string $name
+   *   The name of the calendar.
+   * @param array $values
+   *   The values to set.
    */
-  public function failure() {
-    return 'Error building calendar for ' . $this->team;
+  public static function setStatus($name, array $values = []) {
+    $statuses = static::loadCalendarStatuses();
+
+    // Make sure we have an object for the cal.
+    if (!isset($statuses->{$name})) {
+      $statuses->{$name} = new stdClass();
+    }
+
+    // Store the values for the cal.
+    foreach ($values as $field => $value) {
+      $statuses->{$name}->{$field} = $value;
+    }
+
+    static::saveCalendarStatuses($statuses);
+  }
+
+  public static function renderSummaries() {
+    $out = [];
+    $info = static::loadCalendarInfo();
+    $statuses = static::loadCalendarStatuses();
+
+    foreach ($info->calendars as $cal_info) {
+      $vars = [
+        'title' => $cal_info->title,
+        'url' => 'http://' . static::httpHost() . "/calendars/{$cal_info->name}.ics",
+        'generated' => isset($statuses->{$cal_info->name}->generated) ? $statuses->{$cal_info->name}->generated : 0,
+        'last_attempt' => isset($statuses->{$cal_info->name}->last_attempt) ? $statuses->{$cal_info->name}->last_attempt : 0,
+        'error' => isset($statuses->{$cal_info->name}->error_message) ? $statuses->{$cal_info->name}->error_message : '',
+        'status' => isset($statuses->{$cal_info->name}->status) ? $statuses->{$cal_info->name}->status : 1,
+        'source' => $cal_info->url,
+      ];
+
+      $twig = Renderer::load()->twig;
+
+      $out[] = $twig->render('summary.twig', $vars);
+    }
+
+    return implode(PHP_EOL, $out);
   }
 
 }

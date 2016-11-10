@@ -1,0 +1,22 @@
+{
+  "calendars": [
+    {
+      "name": "mnt",
+      "title": "US Soccer MNT",
+      "url": "http:\/\/www.ussoccer.com\/mens-national-team\/schedule-tickets",
+      "last_attempt": 1478745012,
+      "generated": 1478745012,
+      "error_message": "",
+      "status": 1
+    },
+    {
+      "name": "wnt",
+      "title": "US Soccer WNT",
+      "url": "http:\/\/www.ussoccer.com\/womens-national-team\/schedule-tickets",
+      "last_attempt": 1478745014,
+      "generated": 1478745014,
+      "error_message": "",
+      "status": 1
+    }
+  ]
+}

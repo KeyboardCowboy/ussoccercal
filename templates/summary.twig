@@ -1,0 +1,31 @@
+<article>
+    <h2>{{ title }}</h2>
+    <div>
+        <span class="label">Last Updated:</span>
+        {{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
+    </div>
+    <div>
+        <span class="label">Last Attempt:</span>
+        {{ last_attempt | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
+    </div>
+
+    <div class="status">
+        <span class="label">Status:</span>
+    {% if status == 1 %}
+        <span class="status--passed">Passed</span>
+    {%  else %}
+        <span class="status--failed">Failed</span>
+    {% endif %}
+    </div>
+
+    {% if message %}
+    <p>{{ message }}</p>
+    {%  endif %}
+
+    <div>
+        <span class="label">Subscribe:</span> <a href="{{ url }}">{{ url }}</a>
+    </div>
+    <div>
+        <span class="label">Source:</span> <a href="{{ source }}">{{ source }}</a>
+    </div>
+</article>

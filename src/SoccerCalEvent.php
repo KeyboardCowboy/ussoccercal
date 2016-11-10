@@ -216,7 +216,7 @@ class SoccerCalEvent {
    *   A unique ID for the event.
    */
   public function getUid() {
-    return $this->cal->getTeam() . '-' . $this->getStartDate() . '@ussoccer.com';
+    return $this->cal->getCalInfo('name') . '-' . $this->getStartDate() . '@ussoccer.com';
   }
 
   /**
