@@ -1,12 +1,10 @@
 <article>
     <h2>{{ title }}</h2>
+    <div><span class="label">Calendar URL:</span> <a href="{{ url }}">{{ url }}</a></div>
     <div>
         <span class="label">Last Updated:</span>
         {{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
     </div>
-    <div><span class="label">Subscribe:</span> <a href="{{ url }}">{{ url }}</a></div>
-
-    <h3>Status Report</h3>
     <div>
         <span class="label">Last Attempt:</span>
         {{ last_attempt | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}

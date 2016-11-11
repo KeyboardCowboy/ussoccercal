@@ -4,9 +4,7 @@
  * Generate an iCal feed for US Soccer.
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/SoccerCalEvent.php';
-require_once __DIR__ . '/Renderer.php';
 
 /**
  * Class SoccerCal.
@@ -256,6 +254,27 @@ class SoccerCal {
       $twig = Renderer::load()->twig;
 
       $out[] = $twig->render('summary.twig', $vars);
+    }
+
+    return implode(PHP_EOL, $out);
+  }
+
+  public static function renderCalendars() {
+    $out = [];
+    $info = static::loadCalendarInfo();
+    $statuses = static::loadCalendarStatuses();
+
+    foreach ($info->calendars as $cal_info) {
+      $vars = [
+        'title' => $cal_info->title,
+        'url' => 'http://' . static::httpHost() . "/calendars/{$cal_info->name}.ics",
+        'generated' => isset($statuses->{$cal_info->name}->generated) ? $statuses->{$cal_info->name}->generated : 0,
+        'icon' => file_get_contents(__DIR__ . '/../images/cal.svg'),
+      ];
+
+      $twig = Renderer::load()->twig;
+
+      $out[] = $twig->render('cal-download.twig', $vars);
     }
 
     return implode(PHP_EOL, $out);

@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "USSF 90 Minutes", Arial, sans-serif;
+  font-family: 'Monda' , Arial, sans-serif;
   line-height: 1.4em;
 }
 
@@ -9,29 +9,125 @@ header {
   padding: 2em;
 }
 
-#crest, h1 {
+header > * {
   display: inline-block;
   vertical-align: middle;
   color: white;
 }
 
-h1 {
+.header--headings {
   margin-left: 1em;
+}
+
+.header--site-name {
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bold;
+}
+
+h1 {
+  font-weight: normal;
 }
 
 main {
   padding: 2em;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "USSF 90 Minutes", Arial, sans-serif;
-  font-weight: 700;
+.invisible {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
 }
 
-footer {
+article.calendar:not(:last-child) {
+  margin-bottom: 2em;
+}
+
+.calendar__title {
+  margin: 0;
+  display: inline-block;
+  font-size: 2em;
+  vertical-align: middle;
+}
+
+.calendar__link--subscribe {
+  display: inline-block;
+  margin-left: 1em;
+  background-color: #c22032;
+  color: white;
+  text-decoration: none;
+  padding: .5em 1em;
+  border-radius: .25em;
+  line-height: 1em;
+  border: 2px solid #c22032;
+  transition: .1s all;
+}
+
+.calendar__link--subscribe:hover,
+.calendar__link--subscribe:focus {
+  background-color: #c26a6f;
+}
+
+.calendar__link--subscribe > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.calendar__link__icon svg {
+  width: 1.5em;
+  height: auto;
+  margin-right: .5em;
+}
+
+.calendar__link__icon svg path {
+  fill: white;
+}
+
+.calendar__updated {
+  font-size: 0.85em;
+  font-style: italic;
+  color: #666;
+  margin: .5em 0;
+}
+
+.page__footer {
   padding: 2em;
   background-color: #212844;
   color: white;
+}
+
+.footer__menu {
+  margin: 0;
+  padding: 0;
+}
+
+.footer__menu li {
+  list-style: none;
+  display: inline-block;
+  margin-right: -5px;
+}
+
+.footer__menu li a {
+  color: white;
+  text-decoration: none;
+  padding: 0 1em;
+}
+
+.footer__menu li a:hover,
+.footer__menu li a:focus {
+  text-decoration: underline;
+}
+
+.footer__menu li:not(:last-child) a {
+  border-right: 1px solid white;
+}
+
+.footer__info {
+  font-size: 0.85em;
+  font-style: italic;
 }
 
 .status--passed {

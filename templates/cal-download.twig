@@ -1,0 +1,12 @@
+<article class="calendar">
+    <h2 class="calendar__title">{{ title }}</h2>
+    <a class="calendar__link--subscribe" href="{{ url }}">
+        <i class="calendar__link__icon">{{ icon | raw }}</i>
+        <span class="calendar__link__text">Subscribe</span>
+        <span class="invisible"> to {{ title }}</span>
+    </a>
+    <div class="calendar__updated">
+        <span class="calendar__updated__label">Last Updated:</span>
+        <time class="calendar__updated__time">{{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}</time>
+    </div>
+</article>

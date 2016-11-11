@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../src/SoccerCal.php';
 
+use \src\Page\Page;
+
 /**
  * Unit tests for SoccerCal class.
  */
@@ -9,7 +11,6 @@ class SoccerCalTest extends PHPUnit_Framework_TestCase {
   private $soccerCal;
 
   public function setUp() {
-    $this->soccerCal = new SoccerCalMock('mnt');
   }
 
   public function testExtractData() {
@@ -18,7 +19,7 @@ class SoccerCalTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testRenderCal() {
-    $this->soccerCal->render();
+    Page::parseArgs();
   }
 
 }
