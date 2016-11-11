@@ -143,7 +143,12 @@ class SoccerCalEvent {
    *   Info from the 'watch' cell.
    */
   private function extractInfo(DOMElement $cell) {
-    return '';
+    // Store links for the description.
+    $this->extractLinks($cell);
+
+    $text = $this->extractNodeText($cell);
+
+    return trim($text);
   }
 
   /**
@@ -168,6 +173,18 @@ class SoccerCalEvent {
 
       $i++;
     }
+  }
+
+  private function extractNodeText(DOMElement $element) {
+    $text = '';
+
+    foreach ($element->childNodes as $node) {
+      if ($node->nodeName === '#text') {
+        $text .= $node->textContent;
+      }
+    }
+
+    return preg_replace('/(\s+)|\|/', ' ', $text);
   }
 
   /**
@@ -248,9 +265,13 @@ class SoccerCalEvent {
   public function getDescription() {
     $out = [];
 
+    // Get the text info.
+    $out[] = "Watch: {$this->info}";
+
     // Add extracted URLs.
     foreach ($this->links as $href => $text) {
-      $url = SoccerCal::USSOCCER_HOSTNAME . $href;
+      $url = (stripos($href, 'http') === 0) ? $href : SoccerCal::USSOCCER_HOSTNAME . $href;
+
       $out[] = $text . ':\n' . $url;
     }
 

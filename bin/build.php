@@ -4,7 +4,9 @@
  * Build the .ics file for the MNT.
  */
 
-require_once __DIR__ . '/src/SoccerCal.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/Renderer.php';
+require_once __DIR__ . '/../src/SoccerCal.php';
 
 // Load the calendar info.
 $json = SoccerCal::loadCalendarInfo();
