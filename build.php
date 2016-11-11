@@ -23,6 +23,8 @@ foreach ($json->calendars as &$cal_info) {
       'status' => 1,
     ];
     SoccerCal::setStatus($cal_info->name, $vars);
+
+    print "Updated {$cal_info->title}.";
   }
   catch (Exception $e) {
     // Log the error.
@@ -33,7 +35,9 @@ foreach ($json->calendars as &$cal_info) {
     ];
 
     SoccerCal::setStatus($cal_info->name, $vars);
+
+    print "Failed to update {$cal_info->title}.";
   }
 }
 
-exit("Calendars updated.");
+exit(0);
