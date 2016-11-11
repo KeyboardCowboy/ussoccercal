@@ -35,3 +35,5 @@ foreach ($json->calendars as &$cal_info) {
     SoccerCal::setStatus($cal_info->name, $vars);
   }
 }
+
+exit("Calendars updated.");
