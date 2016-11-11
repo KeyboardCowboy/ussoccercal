@@ -1,2 +1,2 @@
 web: vendor/bin/heroku-php-apache2 ./
-worker: php ./build.php
+worker: curl http://ussoccercal.herokuapp.com/build.php

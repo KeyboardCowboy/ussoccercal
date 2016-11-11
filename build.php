@@ -40,4 +40,3 @@ foreach ($json->calendars as &$cal_info) {
   }
 }
 
-exit(0);
