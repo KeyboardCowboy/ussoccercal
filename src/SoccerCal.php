@@ -119,10 +119,6 @@ class SoccerCal {
         }
       }
     }
-
-    if (empty($this->events)) {
-      throw new Exception("Failed to extract events from the schedule.");
-    }
   }
 
   /**
