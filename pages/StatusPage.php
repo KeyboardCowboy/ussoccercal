@@ -10,7 +10,7 @@ class StatusPage extends Page {
   }
 
   public function content() {
-    return SoccerCal::renderSummaries();
+    return SoccerCal::renderStatusReports();
   }
 
 }

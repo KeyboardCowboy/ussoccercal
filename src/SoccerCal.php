@@ -231,7 +231,13 @@ class SoccerCal {
     static::saveCalendarStatuses($statuses);
   }
 
-  public static function renderSummaries() {
+  /**
+   * Render the status reports for calendars.
+   *
+   * @return string
+   *   The HTML for the calendar statuses.
+   */
+  public static function renderStatusReports() {
     $out = [];
     $info = static::loadCalendarInfo();
     $statuses = static::loadCalendarStatuses();
@@ -255,16 +261,25 @@ class SoccerCal {
     return implode(PHP_EOL, $out);
   }
 
+  /**
+   * Render the calendar links.
+   *
+   * @return string
+   *   The HTML for the calendar items.
+   */
   public static function renderCalendars() {
     $out = [];
     $info = static::loadCalendarInfo();
     $statuses = static::loadCalendarStatuses();
 
     foreach ($info->calendars as $cal_info) {
+      $cal_path = __DIR__ . "/../calendars/{$cal_info->name}.ics";
+      $has_cal = file_exists($cal_path);
+
       $vars = [
         'title' => $cal_info->title,
-        'url' => 'http://' . static::httpHost() . "/calendars/{$cal_info->name}.ics",
-        'generated' => isset($statuses->{$cal_info->name}->generated) ? $statuses->{$cal_info->name}->generated : 0,
+        'url' => $has_cal ? 'http://' . static::httpHost() . "/calendars/{$cal_info->name}.ics" : '',
+        'generated' => ($has_cal && isset($statuses->{$cal_info->name}->generated)) ? $statuses->{$cal_info->name}->generated : 0,
         'icon' => file_get_contents(__DIR__ . '/../images/cal.svg'),
       ];
 
