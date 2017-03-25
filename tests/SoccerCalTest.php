@@ -14,7 +14,7 @@ class SoccerCalTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testExtractData() {
-    // $this->soccerCal->extractData();
+    $this->soccerCal->extractData();
     $no=0;
   }
 

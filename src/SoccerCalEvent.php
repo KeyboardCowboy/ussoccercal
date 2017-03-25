@@ -59,7 +59,10 @@ class SoccerCalEvent {
    * @param \DOMNodeList $cells
    */
   private function extractData(DOMNodeList $cells) {
-    $this->datetime = $this->extractDateTime($cells->item(static::$field['date']));
+    $this->datetime = $this->extractDateTime(
+      $cells->item(static::$field['date']),
+      $cells->item(static::$field['time'])
+    );
     $this->matchup = $this->extractMatchup($cells->item(static::$field['matchup']));
     $this->venue = $this->extractVenue($cells->item(static::$field['venue']));
     $this->info = $this->extractInfo($cells->item(static::$field['info']));
@@ -68,21 +71,39 @@ class SoccerCalEvent {
   /**
    * Extract the datetime from the schedule event.
    *
-   * @param \DOMElement $cell
+   * @param \DOMElement $date_cell
    *   The cell containing the date.
    *
    * @return string
    *   The datetime of the event in the format YYYYMMDDTHHMMSS.
    */
-  private function extractDateTime(DOMElement $cell) {
-    $attributes = $cell->getElementsByTagName('time')->item(0)->attributes;
+  private function extractDateTime(DOMElement $date_cell, DOMElement $time_cell) {
+    $attributes = $date_cell->getElementsByTagName('time')->item(0)->attributes;
     $datetime = $attributes->getNamedItem('datetime')->value;
+
+    $date_string = $date_cell->getElementsByTagName('time')->item(0)->nodeValue;
+    $time_string = $time_cell->nodeValue;
+
+    $time_parts = explode(' ', $time_string);
+    $timezone = array_pop($time_parts);
+    $time_string = implode(' ', $time_parts);
+
+    if (strlen($timezone) === 2) {
+      $timezone = $timezone[0] . 'S' . $timezone[1];
+    }
+    $full_timezone = timezone_name_from_abbr($timezone);
+
+    $datetime = new DateTime("$date_string $time_string");
+
+    // We can't rely on the time element anymore as the time is provided in the
+    // timezone of the match but that timezone is not indicated.
+    // $timestamp = strtotime("{$date_string}:{$time_string}");
 
     // The times from the website are listed in EST but still contain the UMT
     // indicator 'Z' so we remove it as we're setting the time zone manually.
-    $datetime = str_replace('Z', '', $datetime);
+    // $datetime = str_replace('Z', '', $datetime);
 
-    return $datetime;
+    return 0;
   }
 
   /**
@@ -201,7 +222,7 @@ class SoccerCalEvent {
   protected function formatDateTime($datetime, $full = TRUE) {
     $date = $full ? date('Ymd\THis', $datetime) : date('Ymd', $datetime);
 
-    return 'America/New_York:' . $date;
+    return $date;
   }
 
   /**
