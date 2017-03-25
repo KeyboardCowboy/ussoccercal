@@ -27,6 +27,9 @@ class SoccerCalEvent {
   // The calculated datetime of the event.
   private $datetime;
 
+  // The timezone of the event.
+  private $timezone;
+
   // Links gathered from within match data.
   private $links = [];
 
@@ -78,32 +81,30 @@ class SoccerCalEvent {
    *   The datetime of the event in the format YYYYMMDDTHHMMSS.
    */
   private function extractDateTime(DOMElement $date_cell, DOMElement $time_cell) {
-    $attributes = $date_cell->getElementsByTagName('time')->item(0)->attributes;
-    $datetime = $attributes->getNamedItem('datetime')->value;
-
+    // Get the string values from the date and time cells since the value from
+    // the time element doesn't contain a timezone and reports the time in
+    // whatever the event timezone is.
     $date_string = $date_cell->getElementsByTagName('time')->item(0)->nodeValue;
     $time_string = $time_cell->nodeValue;
 
+    // Extract the timezone abbreviation from the time string.
     $time_parts = explode(' ', $time_string);
-    $timezone = array_pop($time_parts);
+    $tz_abbrev = array_pop($time_parts);
     $time_string = implode(' ', $time_parts);
 
-    if (strlen($timezone) === 2) {
-      $timezone = $timezone[0] . 'S' . $timezone[1];
+    // The website lists timezones in American timezones, but with two char
+    // format.  We need three chars to use the conversion function, so inject an
+    // S in between to form something like EST.
+    if (strlen($tz_abbrev) === 2) {
+      $tz_abbrev = $tz_abbrev[0] . 'S' . $tz_abbrev[1];
     }
-    $full_timezone = timezone_name_from_abbr($timezone);
+
+    // Store the timezone for later reference.
+    $this->timezone = timezone_name_from_abbr($tz_abbrev);
 
     $datetime = new DateTime("$date_string $time_string");
 
-    // We can't rely on the time element anymore as the time is provided in the
-    // timezone of the match but that timezone is not indicated.
-    // $timestamp = strtotime("{$date_string}:{$time_string}");
-
-    // The times from the website are listed in EST but still contain the UMT
-    // indicator 'Z' so we remove it as we're setting the time zone manually.
-    // $datetime = str_replace('Z', '', $datetime);
-
-    return 0;
+    return $datetime->format("Ymd\THis");
   }
 
   /**
