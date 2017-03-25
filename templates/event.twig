@@ -1,6 +1,6 @@
 BEGIN:VEVENT
 UID:{{ uid }}
-SUMMARY:{{ summary }}
+SUMMARY:{{ summary|raw }}
 {% if location %}
 LOCATION:{{ location }}
 {% endif %}

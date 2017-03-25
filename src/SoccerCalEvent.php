@@ -100,7 +100,7 @@ class SoccerCalEvent {
     }
 
     // Store the timezone for later reference.
-    $this->timezone = timezone_name_from_abbr($tz_abbrev);
+    $this->timezone = $tz_abbrev ==='TBD' ? 'America/New_York' : timezone_name_from_abbr($tz_abbrev);
 
     $datetime = new DateTime("$date_string $time_string");
 
@@ -223,7 +223,7 @@ class SoccerCalEvent {
   protected function formatDateTime($datetime, $full = TRUE) {
     $date = $full ? date('Ymd\THis', $datetime) : date('Ymd', $datetime);
 
-    return $date;
+    return $this->timezone . ':' .$date;
   }
 
   /**
@@ -275,7 +275,7 @@ class SoccerCalEvent {
    *   The matchup info to be used as the summary.
    */
   public function getSummary() {
-    return $this->matchup;
+    return strtr($this->matchup, array('&' => 'and'));
   }
 
   /**
@@ -331,7 +331,7 @@ class SoccerCalEvent {
   public function hasEndTime() {
     list($date, $time) = explode('T', $this->datetime);
 
-    return ($time !== '00:00:00');
+    return ($time !== '000000');
   }
 
   /**
