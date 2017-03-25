@@ -27,6 +27,9 @@ class SoccerCalEvent {
   // The calculated datetime of the event.
   private $datetime;
 
+  // The timezone of the event.
+  private $timezone;
+
   // Links gathered from within match data.
   private $links = [];
 
@@ -59,7 +62,10 @@ class SoccerCalEvent {
    * @param \DOMNodeList $cells
    */
   private function extractData(DOMNodeList $cells) {
-    $this->datetime = $this->extractDateTime($cells->item(static::$field['date']));
+    $this->datetime = $this->extractDateTime(
+      $cells->item(static::$field['date']),
+      $cells->item(static::$field['time'])
+    );
     $this->matchup = $this->extractMatchup($cells->item(static::$field['matchup']));
     $this->venue = $this->extractVenue($cells->item(static::$field['venue']));
     $this->info = $this->extractInfo($cells->item(static::$field['info']));
@@ -68,21 +74,37 @@ class SoccerCalEvent {
   /**
    * Extract the datetime from the schedule event.
    *
-   * @param \DOMElement $cell
+   * @param \DOMElement $date_cell
    *   The cell containing the date.
    *
    * @return string
    *   The datetime of the event in the format YYYYMMDDTHHMMSS.
    */
-  private function extractDateTime(DOMElement $cell) {
-    $attributes = $cell->getElementsByTagName('time')->item(0)->attributes;
-    $datetime = $attributes->getNamedItem('datetime')->value;
+  private function extractDateTime(DOMElement $date_cell, DOMElement $time_cell) {
+    // Get the string values from the date and time cells since the value from
+    // the time element doesn't contain a timezone and reports the time in
+    // whatever the event timezone is.
+    $date_string = $date_cell->getElementsByTagName('time')->item(0)->nodeValue;
+    $time_string = $time_cell->nodeValue;
 
-    // The times from the website are listed in EST but still contain the UMT
-    // indicator 'Z' so we remove it as we're setting the time zone manually.
-    $datetime = str_replace('Z', '', $datetime);
+    // Extract the timezone abbreviation from the time string.
+    $time_parts = explode(' ', $time_string);
+    $tz_abbrev = array_pop($time_parts);
+    $time_string = implode(' ', $time_parts);
 
-    return $datetime;
+    // The website lists timezones in American timezones, but with two char
+    // format.  We need three chars to use the conversion function, so inject an
+    // S in between to form something like EST.
+    if (strlen($tz_abbrev) === 2) {
+      $tz_abbrev = $tz_abbrev[0] . 'S' . $tz_abbrev[1];
+    }
+
+    // Store the timezone for later reference.
+    $this->timezone = $tz_abbrev ==='TBD' ? 'America/New_York' : timezone_name_from_abbr($tz_abbrev);
+
+    $datetime = new DateTime("$date_string $time_string");
+
+    return $datetime->format("Ymd\THis");
   }
 
   /**
@@ -201,7 +223,7 @@ class SoccerCalEvent {
   protected function formatDateTime($datetime, $full = TRUE) {
     $date = $full ? date('Ymd\THis', $datetime) : date('Ymd', $datetime);
 
-    return 'America/New_York:' . $date;
+    return $this->timezone . ':' .$date;
   }
 
   /**
@@ -253,7 +275,7 @@ class SoccerCalEvent {
    *   The matchup info to be used as the summary.
    */
   public function getSummary() {
-    return $this->matchup;
+    return strtr($this->matchup, array('&' => 'and'));
   }
 
   /**
@@ -309,7 +331,7 @@ class SoccerCalEvent {
   public function hasEndTime() {
     list($date, $time) = explode('T', $this->datetime);
 
-    return ($time !== '00:00:00');
+    return ($time !== '000000');
   }
 
   /**
