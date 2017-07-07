@@ -6,7 +6,6 @@
 
 namespace KeyboardCowboy\CalDom\Calendars;
 
-use CalDom\Calendar\Calendar;
 use CalDom\Event\Event;
 
 /**
@@ -14,7 +13,7 @@ use CalDom\Event\Event;
  *
  * @package USMNTCal
  */
-class USSoccerCal extends Calendar {
+class USSoccerCal extends CalDomCal {
 
   /**
    * {@inheritdoc}

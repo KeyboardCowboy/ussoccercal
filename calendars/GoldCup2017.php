@@ -6,14 +6,13 @@
 
 namespace KeyboardCowboy\CalDom\Calendars;
 
-use CalDom\Calendar\Calendar;
 use CalDom\Event\Event;
 use Artack\DOMQuery\DOMQuery;
 
 /**
  * Class GoldCup2017
  */
-class GoldCup2017 extends Calendar {
+class GoldCup2017 extends CalDomCal {
 
   /**
    * {@inheritdoc}
