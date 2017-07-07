@@ -40,7 +40,7 @@ class Page {
     switch ($this->page) {
       case 'home':
         $renderer = Renderer::load();
-        $output = [];
+        $output = ['<p>Calendar feeds are automatically updated from their source sites.  Want me to add a calendar?  Let me know on <a href="http://twitter.com/ChrisAlbrecht" target="_blank">Twitter</a>!</p>'];
 
         foreach (ReportBuilder::getReport() as $cal_info) {
           $cal_info['icon'] = @file_get_contents(DOCROOT . '/images/cal.svg');
