@@ -3,7 +3,7 @@ title: 'US Soccer WNT'
 url: 'http://www.ussoccer.com/womens-national-team/schedule-tickets'
 base_url: 'http://www.ussoccer.com'
 events:
-  selector: 'table.match-table tr.team-MNT'
+  selector: 'table.match-table tr.team-WNT'
   title:
     selector: 'td:nth-child(3) meta[itemprop="name"]'
     attribute: 'content'
