@@ -1,9 +1,9 @@
 # Ignore generated ical files.
 calendars/*.ics
-/data/statuses.json
+calendars/status.yml
 
 # Ignore local log files.
-/log
+/log/
 
 # Ignore vendor dir.
-/vendor
+/vendor/
