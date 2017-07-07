@@ -44,7 +44,7 @@ class Page {
 
         foreach (ReportBuilder::getReport() as $cal_info) {
           $cal_info['icon'] = @file_get_contents(DOCROOT . '/images/cal.svg');
-          $cal_info['url'] = 'webcal://' . $_SERVER['HTTP_HOST'] . $cal_info['url'];
+          $cal_info['url'] = 'webcal://' . $_SERVER['HTTP_HOST'] . '/' . $cal_info['url'];
           $output[] = $renderer->twig->render('cal-download.twig', $cal_info);
         }
 
