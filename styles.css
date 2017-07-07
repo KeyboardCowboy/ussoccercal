@@ -55,7 +55,7 @@ article.calendar:not(:last-child) {
 
 .calendar__link--subscribe {
   display: inline-block;
-  margin-left: 1em;
+  margin-right: 1em;
   background-color: #c22032;
   color: white;
   text-decoration: none;

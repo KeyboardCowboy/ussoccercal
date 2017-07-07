@@ -1,27 +1,38 @@
 <article>
-    <h2>{{ title }}</h2>
-    <div><span class="label">Calendar URL:</span> <a href="{{ url }}">{{ url }}</a></div>
-    <div>
-        <span class="label">Last Updated:</span>
-        {{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
-    </div>
-    <div>
-        <span class="label">Last Attempt:</span>
-        {{ last_attempt | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
-    </div>
+  <h2>{{ title }}</h2>
+  <div><span class="label">Calendar URL:</span>
+    <a href="{{ url }}">{{ url }}</a></div>
+  <div>
+    <span class="label">Last Updated:</span>
+    {{ generated | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
+  </div>
+  <div>
+    <span class="label">Last Attempt:</span>
+    {{ last_attempt | date("F jS Y \\a\\t g:ia \\E\\T", timezone="America/New_York") }}
+  </div>
 
-    <div class="status">
-        <span class="label">Status:</span>
-    {% if status == 1 %}
-        <span class="status--passed">Passed</span>
-    {% else %}
-        <span class="status--failed">Failed</span>
-    {% endif %}
+  {#<div class="status">#}
+    {#<span class="label">Status:</span>#}
+    {#{% if status == 1 %}#}
+      {#<span class="status--passed">Passed</span>#}
+    {#{% else %}#}
+      {#<span class="status--failed">Failed</span>#}
+    {#{% endif %}#}
 
-    {% if message %}
-        <span class="status--{% if status == 1 %}passed{% else %}failed{% endif %}"> - {{ message }}</span>
-    {%  endif %}
-    </div>
+    {#{% if message %}#}
+      {#<span class="status--{% if status == 1 %}passed{% else %}failed{% endif %}"> - {{ message }}</span>#}
+    {#{% endif %}#}
+  {#</div>#}
 
-    <div><span class="label">Source:</span> <a href="{{ source }}">{{ source }}</a></div>
+  {% if source is iterable %}
+    <span class="label">Source:</span>
+    <ul>
+      {% for source_url in source %}
+        <li><a href="{{ source_url }}">{{ source_url }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div><span class="label">Source:</span>
+      <a href="{{ source }}">{{ source }}</a></div>
+  {% endif %}
 </article>

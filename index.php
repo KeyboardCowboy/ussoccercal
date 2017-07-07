@@ -1,19 +1,17 @@
 <?php
+/**
+ * @file
+ * Traffic director.
+ */
 
-require_once __DIR__ . '/vendor/autoload.php';
+namespace KeyboardCowboy\CalDom;
+
+use KeyboardCowboy\CalDom\Pages\Page;
+
+require_once __DIR__ . '/bin/init.php';
 
 $args = array_filter(explode('/', trim($_SERVER['REQUEST_URI'], '/')));
-$page = empty($args) ? 'home' : array_shift($args);
-$class = ucwords(strtolower($page)) . 'Page';
-$file = __DIR__ . "/pages/{$class}.php";
+$page_arg = empty($args) ? 'home' : array_shift($args);
 
-if (file_exists($file)) {
-  require_once __DIR__ . '/src/Page.php';
-  require_once $file;
-
-  $page = new $class();
-  print $page->render();
-}
-else {
-  exit(1);
-}
+$page = new Page($page_arg);
+print $page->render();

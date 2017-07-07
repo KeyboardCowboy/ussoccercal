@@ -1,44 +1,36 @@
 <?php
 /**
  * @file
- * Build the .ics file for the MNT.
+ * Build the .ics files.
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/Renderer.php';
-require_once __DIR__ . '/../src/SoccerCal.php';
+namespace KeyboardCowboy\CalDom;
 
-// Load the calendar info.
-$json = SoccerCal::loadCalendarInfo();
+use KeyboardCowboy\CalDom\Calendars;
+use KeyboardCowboy\CalDom\Components\ReportBuilder;
 
-// Build each calendar.
-foreach ($json->calendars as &$cal_info) {
-  try {
-    $calendar = new SoccerCal($cal_info);
-    $calendar->generateCalendar();
+require_once __DIR__ . '/init.php';
 
-    // Log the results.
-    $vars = [
-      'last_attempt' => time(),
-      'generated' => time(),
-      'message' => 'Calendar successfully updated!',
-      'status' => 1,
-    ];
-    SoccerCal::setStatus($cal_info->name, $vars);
+$reports = new ReportBuilder();
 
-    print "Updated {$cal_info->title}." . PHP_EOL;
-  }
-  catch (Exception $e) {
-    // Log the error.
-    $vars = [
-      'last_attempt' => time(),
-      'status' => 0,
-      'message' => $e->getMessage(),
-    ];
-
-    SoccerCal::setStatus($cal_info->name, $vars);
-
-    print "Failed to update {$cal_info->title}." . PHP_EOL;
-  }
+if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/usmnt.yml')) {
+  $cal->generateCalendar();
+  $reports->addReport($cal);
 }
 
+if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/uswnt.yml')) {
+  $cal->generateCalendar();
+  $reports->addReport($cal);
+}
+
+if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/ussoccer.yml')) {
+  $cal->generateCalendar();
+  $reports->addReport($cal);
+}
+
+if ($cal = Calendars\GoldCup2017::load(CAL_DATA_SOURCE . '/goldcup2017.yml')) {
+  $cal->generateCalendar();
+  $reports->addReport($cal);
+}
+
+$reports->writeReport();

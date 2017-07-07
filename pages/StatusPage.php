@@ -1,5 +1,9 @@
 <?php
 
+namespace KeyboardCowboy\CalDom\Pages;
+
+use KeyboardCowboy\CalDom\Components\Page;
+
 class StatusPage extends Page {
   public function pageTitle() {
     return 'Status Report';
@@ -10,7 +14,7 @@ class StatusPage extends Page {
   }
 
   public function content() {
-    return SoccerCal::renderStatusReports();
+    // return SoccerCal::renderStatusReports();
   }
 
 }
