@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fc4e43b856af2240ba5204edd6c8fe77",
-    "content-hash": "3b5e98b3f436c9b79d7f7d5770a575ea",
+    "hash": "8fdda7471dff04872350dcbeab600520",
+    "content-hash": "b7e72a1600eb635ffe91b373aabb2dc9",
     "packages": [
         {
             "name": "artack/dom-query",
@@ -102,16 +102,16 @@
         },
         {
             "name": "keyboardcowboy/caldom",
-            "version": "dev-master",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KeyboardCowboy/caldom.git",
-                "reference": "49ee40f20923dc088b6e7d0bf8ba152d8bbf4589"
+                "reference": "0f462eac7cae61c725611f41e696888fa9a8a605"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KeyboardCowboy/caldom/zipball/49ee40f20923dc088b6e7d0bf8ba152d8bbf4589",
-                "reference": "49ee40f20923dc088b6e7d0bf8ba152d8bbf4589",
+                "url": "https://api.github.com/repos/KeyboardCowboy/caldom/zipball/0f462eac7cae61c725611f41e696888fa9a8a605",
+                "reference": "0f462eac7cae61c725611f41e696888fa9a8a605",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
                 }
             ],
             "description": "Generate webcal feeds by scraping HTML pages.",
-            "time": "2017-07-07 00:42:00"
+            "time": "2017-07-07 05:10:21"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1516,9 +1516,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keyboardcowboy/caldom": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
