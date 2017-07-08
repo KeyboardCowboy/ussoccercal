@@ -102,16 +102,16 @@
         },
         {
             "name": "keyboardcowboy/caldom",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KeyboardCowboy/caldom.git",
-                "reference": "0f462eac7cae61c725611f41e696888fa9a8a605"
+                "reference": "0859e7319696b20925a14e79f4961fbc4ff78640"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KeyboardCowboy/caldom/zipball/0f462eac7cae61c725611f41e696888fa9a8a605",
-                "reference": "0f462eac7cae61c725611f41e696888fa9a8a605",
+                "url": "https://api.github.com/repos/KeyboardCowboy/caldom/zipball/0859e7319696b20925a14e79f4961fbc4ff78640",
+                "reference": "0859e7319696b20925a14e79f4961fbc4ff78640",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
                 }
             ],
             "description": "Generate webcal feeds by scraping HTML pages.",
-            "time": "2017-07-07 05:10:21"
+            "time": "2017-07-08 22:34:37"
         },
         {
             "name": "myclabs/deep-copy",
