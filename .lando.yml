@@ -1,0 +1,4 @@
+name: us-soccer-cal
+recipe: lamp
+config:
+  webroot: .

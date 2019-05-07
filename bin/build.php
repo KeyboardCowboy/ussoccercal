@@ -28,7 +28,7 @@ if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/ussoccer.yml')) {
   $reports->addReport($cal);
 }
 
-if ($cal = Calendars\GoldCup2017::load(CAL_DATA_SOURCE . '/goldcup2017.yml')) {
+if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/goldcup-us-2019.yml')) {
   $cal->generateCalendar();
   $reports->addReport($cal);
 }
