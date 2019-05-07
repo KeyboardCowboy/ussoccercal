@@ -2,3 +2,9 @@ name: us-soccer-cal
 recipe: lamp
 config:
   webroot: .
+  xdebug: true
+services:
+  # Webserver from recipe.
+  appserver:
+    config:
+      conf: '.lando_config/php/local.ini'

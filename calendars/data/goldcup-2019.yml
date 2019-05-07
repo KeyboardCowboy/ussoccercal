@@ -1,0 +1,21 @@
+name: 'goldcup2019'
+title: 'Full Gold Cup 2019'
+url: 'https://www.ussoccer.com/mens-national-team/tournaments/2019-concacaf-gold-cup'
+base_url: 'http://www.ussoccer.com'
+events:
+  selector: 'table.genericTable tr'
+  title:
+    selector: 'td:nth-child(2)'
+  location:
+    selector: 'td:nth-child(4)'
+  description:
+    selector: 'td:nth-child(4)'
+  starttime:
+    selector: 'td:nth-child(1)'
+    attribute: 'content'
+  endtime:
+    duration: "+2 hours"
+  timezone:
+    selector: 'td:nth-child(2)'
+  url:
+    selector: 'td:nth-child(2)'

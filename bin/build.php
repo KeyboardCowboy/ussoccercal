@@ -6,6 +6,7 @@
 
 namespace KeyboardCowboy\CalDom;
 
+use CalDom\Calendar\Calendar;
 use KeyboardCowboy\CalDom\Calendars;
 use KeyboardCowboy\CalDom\Components\ReportBuilder;
 
@@ -29,6 +30,12 @@ if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/ussoccer.yml')) {
 }
 
 if ($cal = Calendars\USSoccerCal::load(CAL_DATA_SOURCE . '/goldcup-us-2019.yml')) {
+  $cal->generateCalendar();
+  $reports->addReport($cal);
+}
+
+/** @var \CalDom\Calendar\Calendar $cal */
+if ($cal = Calendars\GoldCup2019::load(CAL_DATA_SOURCE . '/goldcup-2019.yml')) {
   $cal->generateCalendar();
   $reports->addReport($cal);
 }
