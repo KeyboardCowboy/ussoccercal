@@ -9,6 +9,10 @@ header {
   padding: 2em;
 }
 
+#crest {
+  max-width: 100px;
+}
+
 header > * {
   display: inline-block;
   vertical-align: middle;
