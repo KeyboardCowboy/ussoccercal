@@ -41,6 +41,7 @@ class Page {
       case 'home':
         $renderer = Renderer::load();
         $output = ['<p>Calendar feeds are automatically updated from their source sites.  Want me to add a calendar?  Let me know on <a href="http://twitter.com/ChrisAlbrecht" target="_blank">Twitter</a>!</p>'];
+        $output = ['<p>Due to a recent redesign of the US Soccer website, calendar feeds are not working.  I\'ll try to resolve this as soon as possible.</p>'];
 
         foreach (ReportBuilder::getReport() as $cal_info) {
           $cal_info['icon'] = @file_get_contents(DOCROOT . '/images/cal.svg');
