@@ -1,24 +1,20 @@
 name: 'ussoccer_mnt'
 title: 'US Soccer MNT'
-url: 'http://www.ussoccer.com/mens-national-team/schedule-tickets'
-base_url: 'http://www.ussoccer.com'
+url: 'https://www.ussoccer.com/teams/usmnt'
+base_url: 'https://www.ussoccer.com'
 events:
-  selector: 'table.match-table tr.team-MNT'
+  selector: '.flickity-slider .MatchScheduleCarousel-module__matchCardContainer--ygblp'
   title:
-    selector: 'td:nth-child(3) meta[itemprop="name"]'
-    attribute: 'content'
+    selector: '.MatchInfo-module__subTitle--1pEab'
   location:
-    selector: 'td:nth-child(4) meta[itemprop="name"]'
-    attribute: 'content'
+    selector: 'div[class^="MatchInfo-module__location--"]'
   description:
-    selector: 'td:nth-child(5)'
+    selector: 'div[class^="MatchInfo-module__title--"]'
   starttime:
-    selector: 'time[itemprop="startDate"]'
-    attribute: 'datetime'
+    selector: 'div[class^="MatchInfo-module__matchStartTime--"]'
   endtime:
     duration: "+2 hours"
   timezone:
-    selector: 'td:nth-child(2)'
+    selector: ''
   url:
-    selector: 'td:nth-child(3) a'
-    attribute: 'href'
+    selector: ''
